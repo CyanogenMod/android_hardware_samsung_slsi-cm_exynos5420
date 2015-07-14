@@ -19,8 +19,8 @@
 #include <hardware/hwcomposer.h>
 
 #define VSYNC_DEV_PREFIX "/sys/devices/"
-#define VSYNC_DEV_MIDDLE "14680000.sysmmu/14640000.sysmmu/"
-#define VSYNC_DEV_NAME  "14400000.fimd_fb/vsync"
+#define VSYNC_DEV_MIDDLE "platform/exynos-sysmmu.11"
+#define VSYNC_DEV_NAME  "exynos5-fb.1/vsync"
 
 #define FIMD_WORD_SIZE_BYTES   16
 #define FIMD_BURSTLEN   8
