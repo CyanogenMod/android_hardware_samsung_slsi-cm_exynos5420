@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-ifeq ($(TARGET_SOC), exynos5422)
-exynos5422_dirs := \
+ifeq ($(TARGET_SOC), exynos5420)
+exynos5420_dirs := \
 	mobicore \
 	gralloc \
 	libdisplaymodule \
@@ -25,15 +25,15 @@ exynos5422_dirs := \
 	libsecurepath 
 
 ifeq ($(BOARD_USES_VIRTUAL_DISPLAY), true)
-exynos5422_dirs += \
+exynos5420_dirs += \
 	libvirtualdisplaymodule
 endif
 
 ifeq ($(BOARD_USES_TRUST_KEYMASTER), true)
-exynos5422_dirs += \
+exynos5420_dirs += \
 	libkeymaster
 endif
 
-include $(call all-named-subdir-makefiles,$(exynos5422_dirs))
+include $(call all-named-subdir-makefiles,$(exynos5420_dirs))
 
 endif
