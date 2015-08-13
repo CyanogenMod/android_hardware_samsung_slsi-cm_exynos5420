@@ -55,6 +55,8 @@
  * INIT request data to SWD
  */
 struct mc_ioctl_init {
+	/* notification buffer start/length [16:16] [start, length] */
+	uint32_t  nq_offset;
 	/* length of notification queue */
 	uint32_t  nq_length;
 	/* mcp buffer start/length [16:16] [start, length] */
@@ -85,7 +87,7 @@ struct mc_ioctl_info {
 struct mc_ioctl_map {
 	size_t		len;	/* Buffer length */
 	uint32_t	handle;	/* WSM handle */
-	uint64_t	phys_addr; /* physical address of WSM (or 0) */
+	unsigned long	phys_addr; /* physical address of WSM (or 0) */
 	unsigned long	addr;	/* Virtual address */
 	bool		reused;	/* if WSM memory was reused, or new allocated */
 };
@@ -103,7 +105,7 @@ struct mc_ioctl_reg_wsm {
 	uint32_t len;		/* size of the virtual address space */
 	uint32_t pid;		/* process id */
 	uint32_t handle;	/* driver handle for locked memory */
-	uint64_t table_phys;	/* physical address of the MMU table */
+	uint32_t table_phys;	/* physical address of the MMU table */
 };
 
 /*
@@ -115,7 +117,7 @@ struct mc_ioctl_resolv_cont_wsm {
 	/* length memory */
 	uint32_t length;
 	/* base address of memory */
-	uint64_t phys;
+	uint32_t phys;
 	/* fd to owner of the buffer */
 	int32_t fd;
 };
@@ -129,7 +131,7 @@ struct mc_ioctl_resolv_wsm {
 	/* fd to owner of the buffer */
 	int32_t fd;
 	/* base address of memory */
-	uint64_t phys;
+	uint32_t phys;
 };
 
 
@@ -173,6 +175,7 @@ struct mc_ioctl_resolv_wsm {
 #define MC_IO_UNREG_WSM		_IO(MC_IOC_MAGIC, 7)
 #define MC_IO_LOCK_WSM		_IO(MC_IOC_MAGIC, 8)
 #define MC_IO_UNLOCK_WSM	_IO(MC_IOC_MAGIC, 9)
+#define MC_IO_EXECUTE		_IOWR(MC_IOC_MAGIC, 10, struct mc_ioctl_execute)
 
 /*
  * Allocate contiguous memory for a process for later mapping with mmap.
@@ -183,6 +186,7 @@ struct mc_ioctl_resolv_wsm {
  */
 #define MC_IO_MAP_WSM		_IOWR(MC_IOC_MAGIC, 11, struct mc_ioctl_map)
 #define MC_IO_MAP_MCI		_IOWR(MC_IOC_MAGIC, 12, struct mc_ioctl_map)
+#define MC_IO_MAP_PWSM		_IOWR(MC_IOC_MAGIC, 13, struct mc_ioctl_map)
 
 /*
  * Clean orphaned WSM buffers. Only available to the daemon and should
