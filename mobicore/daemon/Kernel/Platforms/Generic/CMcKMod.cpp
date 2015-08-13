@@ -219,6 +219,7 @@ int CMcKMod::fcInit(uint32_t nqLength, uint32_t mcpOffset, uint32_t mcpLength)
 
     // Init MC with NQ and MCP buffer addresses
     struct mc_ioctl_init fcInitParams = {
+        .nq_offset = 0,
         .nq_length = nqLength,
         .mcp_offset = mcpOffset,
         .mcp_length = mcpLength
