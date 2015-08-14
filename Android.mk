@@ -15,7 +15,7 @@
 #
 
 ifeq ($(TARGET_BOARD_PLATFORM), exynos5)
-ifeq ($(TARGET_SLSI_VARIANT), insignal)
+ifeq ($(TARGET_SLSI_VARIANT), cm)
 ifeq ($(TARGET_SOC), exynos5420)
 exynos5420_dirs := \
 	mobicore \
