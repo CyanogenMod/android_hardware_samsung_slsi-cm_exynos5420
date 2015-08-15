@@ -121,8 +121,10 @@ static unsigned int _select_heap(int usage)
     else
         heap_mask = ION_HEAP_SYSTEM_MASK;
 
+#ifdef GRALLOC_USAGE_GPU_BUFFER
     if (usage & GRALLOC_USAGE_GPU_BUFFER)
         heap_mask = ION_HEAP_EXYNOS_CONTIG_MASK;
+#endif
 
     return heap_mask;
 }
@@ -189,30 +191,33 @@ static int gralloc_alloc_rgb(int ionfd, int w, int h, int format, int usage,
     }
 
     if (usage & GRALLOC_USAGE_PROTECTED) {
+        alignment = MB_1;
+        ion_flags |= ION_EXYNOS_FIMD_VIDEO_MASK;
+
+#ifdef GRALLOC_USAGE_PRIVATE_NONSECURE
         if (usage & GRALLOC_USAGE_PRIVATE_NONSECURE)
             alignment = 0;
-        else
-            alignment = MB_1;
         if ((usage & GRALLOC_USAGE_PRIVATE_NONSECURE) && (usage & GRALLOC_USAGE_PHYSICALLY_LINEAR))
             ion_flags |= ION_EXYNOS_G2D_WFD_MASK;
-        else
-            ion_flags |= ION_EXYNOS_FIMD_VIDEO_MASK;
+#endif
     }
 
     err = ion_alloc_fd(ionfd, size, alignment, heap_mask, ion_flags,
                        &fd);
+
+#ifdef GRALLOC_USAGE_GPU_BUFFER
     if (err) {
         if (usage & GRALLOC_USAGE_GPU_BUFFER) {
             usage &= ~GRALLOC_USAGE_GPU_BUFFER;
             heap_mask = _select_heap(usage);
             err = ion_alloc_fd(ionfd, size, alignment, heap_mask, ion_flags,
                                 &fd);
-            if (err)
-                return err;
         }
-        else
-            return err;
-    }
+#endif
+
+    if (err)
+        return err;
+
     *hnd = new private_handle_t(fd, size, usage, w, h, format, *stride,
                                 vstride);
 
@@ -373,8 +378,10 @@ static int gralloc_alloc(alloc_device_t* dev,
     gralloc_module_t* module = reinterpret_cast<gralloc_module_t*>
         (dev->common.module);
 
+#ifdef GRALLOC_USAGE_GPU_BUFFER
     if ((usage & GRALLOC_USAGE_GPU_BUFFER) && (w*h != (m->xres)*(m->yres)))
         usage &= ~GRALLOC_USAGE_GPU_BUFFER;
+#endif
 
     err = gralloc_alloc_rgb(m->ionfd, w, h, format, usage, ion_flags, &hnd,
                             &stride);
