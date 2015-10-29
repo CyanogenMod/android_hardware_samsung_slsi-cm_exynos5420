@@ -45,6 +45,7 @@
 #ifndef WIN32
 #include <android/log.h>
 #endif
+#include <errno.h>
 #include <string.h>
 
 /** LOG_I(fmt, args...)
