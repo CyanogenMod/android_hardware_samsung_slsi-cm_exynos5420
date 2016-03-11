@@ -45,7 +45,7 @@
 //#define LOG_VERBOSE
 #include "log.h"
 
-extern string getTlRegistryPath();
+extern string getRegistryPath();
 
 extern pthread_mutex_t         syncMutex;
 extern pthread_cond_t          syncCondition;
@@ -74,7 +74,7 @@ void FSD::run(
 {
 	struct stat st = {0};
 	mcResult_t ret;
-	string storage = getTlRegistryPath()+"/TbStorage";
+	string storage = getRegistryPath()+"/TbStorage";
 	const char* tbstpath = storage.c_str();
 
 	/*Create Tbase storage directory*/
@@ -326,7 +326,7 @@ mcResult_t FSD::FSD_LookFile(void){
 	FILE * pFile=NULL;
 	STH_FSD_message_t* sth_request=NULL;
 	uint32_t res=0;
-	string storage = getTlRegistryPath()+"/TbStorage";
+	string storage = getRegistryPath()+"/TbStorage";
 	const char* tbstpath = storage.c_str();
 	char tadirname[TEE_UUID_STRING_SIZE+1];
 	char filename[2*FILENAMESIZE+1];
@@ -373,7 +373,7 @@ mcResult_t FSD::FSD_ReadFile(void){
 	FILE * pFile=NULL;
 	STH_FSD_message_t* sth_request=NULL;
 	uint32_t res=0;
-	string storage = getTlRegistryPath()+"/TbStorage";
+	string storage = getRegistryPath()+"/TbStorage";
 	const char* tbstpath = storage.c_str();
 	char tadirname[TEE_UUID_STRING_SIZE+1];
 	char filename[2*FILENAMESIZE+1];
@@ -422,7 +422,7 @@ mcResult_t FSD::FSD_WriteFile(void){
 	STH_FSD_message_t* sth_request=NULL;
 	uint32_t res=0;
 	int stat=0;
-	string storage = getTlRegistryPath()+"/TbStorage";
+	string storage = getRegistryPath()+"/TbStorage";
 	const char* tbstpath = storage.c_str();
 	char tadirname[TEE_UUID_STRING_SIZE+1];
 	char filename[2*FILENAMESIZE+1];
@@ -517,7 +517,7 @@ mcResult_t FSD::FSD_DeleteFile(void){
 	FILE * pFile=NULL;
 	uint32_t res=0;
 	STH_FSD_message_t* sth_request=NULL;
-	string storage = getTlRegistryPath()+"/TbStorage";
+	string storage = getRegistryPath()+"/TbStorage";
 	const char* tbstpath = storage.c_str();
 	char tadirname[TEE_UUID_STRING_SIZE+1];
 	char filename[2*FILENAMESIZE+1];
