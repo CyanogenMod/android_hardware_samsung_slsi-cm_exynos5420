@@ -116,7 +116,7 @@ static bool doesDirExist(const char *path)
 }
 
 //------------------------------------------------------------------------------
-static string getRegistryPath()
+string getRegistryPath()
 {
     string registryPath;
 
@@ -801,7 +801,7 @@ static int CleanupGPTAStorage(const char *basename)
 	DIR            *dp;
 	struct dirent  *de;
 	int             e;
-	string TAPath = getTlRegistryPath()+"/TbStorage/"+ basename;
+	string TAPath = getRegistryPath()+"/TbStorage/"+ basename;
 
 	if (NULL != (dp = opendir(TAPath.c_str()))) {
 		while (NULL != (de = readdir(dp))) {
