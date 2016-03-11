@@ -79,10 +79,10 @@ void FSD::run(
 
 	/*Create Tbase storage directory*/
 	if (stat(tbstpath, &st) == -1) {
-		LOG_I("%s: Creating <t-base storage Folder %s\n",TAG_LOG,tbstpath);
+		LOG_I("%s: Create <t-base storage folder %s", TAG_LOG, tbstpath);
 		if(mkdir(tbstpath, 0600)==-1)
 		{
-			LOG_E("%s: failed creating storage folder\n",TAG_LOG);
+			LOG_ERRNO("Failed to create storage folder");
 		}
 	}
 	do{
