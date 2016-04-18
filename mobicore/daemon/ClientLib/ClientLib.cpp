@@ -2,51 +2,44 @@
  * @{
  * @file
  *
- * <t-base Driver API.
+ * MobiCore Driver API.
  *
- * Functions for accessing <t-base functionality from the normal world.
+ * Functions for accessing MobiCore functionality from the normal world.
  * Handles sessions and notifications via MCI buffer.
  *
- *
- * Copyright (c) 2013 TRUSTONIC LIMITED
- * All rights reserved.
+ * <!-- Copyright Giesecke & Devrient GmbH 2009 - 2012 -->
  *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote
+ *    products derived from this software without specific prior
+ *    written permission.
  *
- * 3. Neither the name of the TRUSTONIC LIMITED nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
- * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS
+ * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <stdint.h>
-#ifndef WIN32
 #include <stdbool.h>
 #include <list>
 #include "assert.h"
-#endif
 
 #include "public/MobiCoreDriverApi.h"
 
-#ifndef WIN32
 #include "mc_linux.h"
 #include "Connection.h"
 #include "CMutex.h"
@@ -70,18 +63,18 @@ typedef struct {
 
 using namespace std;
 
-static list<Device *> devices;
+list<Device *> devices;
 
 // Forward declarations.
 uint32_t getDaemonVersion(Connection *devCon, uint32_t *version);
 
-static CMutex devMutex;
+CMutex devMutex;
 //------------------------------------------------------------------------------
 Device *resolveDeviceId(uint32_t deviceId)
 {
     for (list<Device *>::iterator iterator = devices.begin();
-            iterator != devices.end();
-            ++iterator) {
+         iterator != devices.end();
+         ++iterator) {
         Device  *device = (*iterator);
 
         if (device->deviceId == deviceId) {
@@ -136,7 +129,7 @@ bool removeDevice(uint32_t deviceId)
         mcResult = MC_DRV_ERR_DAEMON_DEVICE_NOT_OPEN; \
         break; \
     } else \
-        CHECK_DEVICE(device);
+	CHECK_DEVICE(device);
 
 
 
@@ -188,13 +181,11 @@ bool removeDevice(uint32_t deviceId)
         break; \
     } \
 }
-#endif /* WIN32 */
 
 //------------------------------------------------------------------------------
 __MC_CLIENT_LIB_API mcResult_t mcOpenDevice(uint32_t deviceId)
 {
     mcResult_t mcResult = MC_DRV_OK;
-#ifndef WIN32
 
     Connection *devCon = NULL;
 
@@ -226,7 +217,7 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenDevice(uint32_t deviceId)
         char *errmsg;
         uint32_t version = 0;
         mcResult = getDaemonVersion(devCon, &version);
-        if (mcResult != MC_DRV_OK) {
+        if(mcResult != MC_DRV_OK) {
             break;
         }
         if (!checkVersionOkDAEMON(version, &errmsg)) {
@@ -271,7 +262,6 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenDevice(uint32_t deviceId)
         LOG_I(" Successfully opened the device.");
     }
 
-#endif /* WIN32 */
     return mcResult;
 }
 
@@ -282,9 +272,7 @@ __MC_CLIENT_LIB_API mcResult_t mcCloseDevice(
 )
 {
     mcResult_t mcResult = MC_DRV_OK;
-#ifndef WIN32
-
-	devMutex.lock();
+    devMutex.lock();
     LOG_I("===%s(%i)===", __FUNCTION__, deviceId);
     do {
         Device *device = resolveDeviceId(deviceId);
@@ -323,9 +311,7 @@ __MC_CLIENT_LIB_API mcResult_t mcCloseDevice(
     } while (false);
 
     devMutex.unlock();
-
-#endif /* WIN32 */
-	return mcResult;
+    return mcResult;
 }
 
 
@@ -338,17 +324,15 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenSession(
 )
 {
     mcResult_t mcResult = MC_DRV_OK;
-#ifndef WIN32
 
     devMutex.lock();
     LOG_I("===%s()===", __FUNCTION__);
-
-    BulkBufferDescriptor *bulkBuf = NULL;
 
     do {
         uint32_t handle = 0;
         CHECK_NOT_NULL(session);
         CHECK_NOT_NULL(uuid);
+        CHECK_NOT_NULL(tci);
 
         if (len > MC_MAX_TCI_LEN) {
             LOG_E("TCI length is longer than %d", MC_MAX_TCI_LEN);
@@ -358,6 +342,7 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenSession(
 
         // Get the device associated with the given session
         Device *device = resolveDeviceId(session->deviceId);
+        BulkBufferDescriptor *bulkBuf = NULL;
         CHECK_DEVICE(device);
 
         Connection *devCon = device->connection;
@@ -366,21 +351,17 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenSession(
         // Get the physical address of the given TCI
         CWsm_ptr pWsm = device->findContiguousWsm(tci);
         if (pWsm == NULL) {
-            if (tci != NULL && len != 0) {
-                // Then assume it's a normal buffer that needs to be mapped
-                mcResult = device->mapBulkBuf(tci, len, &bulkBuf);
-                if (mcResult != MC_DRV_OK) {
-                    LOG_E("Registering buffer failed. ret=%x", mcResult);
-                    mcResult = MC_DRV_ERR_WSM_NOT_FOUND;
-                    break;
-                }
-                handle = bulkBuf->handle;
-            } else if ( len != 0 ) {
-                LOG_E("mcOpenSession(): length is more than allocated TCI");
-                mcResult = MC_DRV_ERR_TCI_GREATER_THAN_WSM;
+            // Then assume it's a normal buffer that needs to be mapped
+            mcResult = device->mapBulkBuf(tci, len, &bulkBuf);
+            if (mcResult != MC_DRV_OK) {
+                bulkBuf = NULL;
+                LOG_E("Registering buffer failed. ret=%x", mcResult);
+                mcResult = MC_DRV_ERR_WSM_NOT_FOUND;;
                 break;
             }
-        } else {
+            handle = bulkBuf->handle;
+        }
+        else {
             if (pWsm->len < len) {
                 LOG_E("mcOpenSession(): length is more than allocated TCI");
                 mcResult = MC_DRV_ERR_TCI_GREATER_THAN_WSM;
@@ -406,7 +387,7 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenSession(
                 LOG_E("Daemon could not open session, responseId %d.", mcResult);
             } else {
                 uint32_t mcpResult = MC_DRV_ERROR_MCP(mcResult);
-                LOG_E("<t-base reported failing of MC_MCP_CMD_OPEN_SESSION command, mcpResult %d.", mcpResult);
+                LOG_E("MobiCore reported failing of MC_MCP_CMD_OPEN_SESSION command, mcpResult %d.", mcpResult);
 
                 // IMPROVEMENT-2012-09-03-haenellu: Remove this switch case and use MCP code in tests.
                 switch (mcpResult) {
@@ -490,16 +471,12 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenSession(
         // Session has been established, new session object must be created
         Session *sessionObj = device->createNewSession(session->sessionId, sessionConnection);
         // If the session tci was a mapped buffer then register it
-        if (bulkBuf)
+        if(bulkBuf)
             sessionObj->addBulkBuf(bulkBuf);
 
         LOG_I(" Successfully opened session %d.", session->sessionId);
 
     } while (false);
-
-    if (mcResult != MC_DRV_OK && bulkBuf) {
-        delete bulkBuf;
-    }
 
 // TODO: enable as soon as there are more error codes
 //    if (mcResult == MC_DRV_ERR_SOCKET_WRITE || mcResult == MC_DRV_ERR_SOCKET_READ) {
@@ -509,7 +486,6 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenSession(
 
     devMutex.unlock();
 
-#endif /* WIN32 */
     return mcResult;
 }
 
@@ -524,12 +500,9 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenTrustlet(
 )
 {
     mcResult_t mcResult = MC_DRV_OK;
-#ifndef WIN32
 
     devMutex.lock();
     LOG_I("===%s()===", __FUNCTION__);
-
-    BulkBufferDescriptor *bulkBuf = NULL;
 
     do {
         uint32_t handle = 0;
@@ -545,6 +518,7 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenTrustlet(
 
         // Get the device associated with the given session
         Device *device = resolveDeviceId(session->deviceId);
+        BulkBufferDescriptor *bulkBuf = NULL;
         CHECK_DEVICE(device);
 
         Connection *devCon = device->connection;
@@ -556,12 +530,14 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenTrustlet(
             // Then assume it's a normal buffer that needs to be mapped
             mcResult = device->mapBulkBuf(tci, len, &bulkBuf);
             if (mcResult != MC_DRV_OK) {
+                bulkBuf = NULL;
                 LOG_E("Registering buffer failed. ret=%x", mcResult);
                 mcResult = MC_DRV_ERR_WSM_NOT_FOUND;;
                 break;
             }
             handle = bulkBuf->handle;
-        } else {
+        }
+        else {
             if (pWsm->len < len) {
                 LOG_E("mcOpenSession(): length is more than allocated TCI");
                 mcResult = MC_DRV_ERR_TCI_GREATER_THAN_WSM;
@@ -580,11 +556,9 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenTrustlet(
 
         // Send the full trustlet data
         int ret = devCon->writeData(trustlet, tlen);
-        if (ret < 0) {
-            LOG_E("sending to Daemon failed.");
-            \
-            mcResult = MC_DRV_ERR_SOCKET_WRITE;
-            \
+        if(ret < 0) {
+            LOG_E("sending to Daemon failed."); \
+            mcResult = MC_DRV_ERR_SOCKET_WRITE; \
             break;
         }
 
@@ -598,7 +572,7 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenTrustlet(
                 LOG_E("Daemon could not open session, responseId %d.", mcResult);
             } else {
                 uint32_t mcpResult = MC_DRV_ERROR_MCP(mcResult);
-                LOG_E("<t-base reported failing of MC_MCP_CMD_OPEN_SESSION command, mcpResult %d.", mcpResult);
+                LOG_E("MobiCore reported failing of MC_MCP_CMD_OPEN_SESSION command, mcpResult %d.", mcpResult);
 
                 // IMPROVEMENT-2012-09-03-haenellu: Remove this switch case and use MCP code in tests.
                 switch (mcpResult) {
@@ -683,16 +657,12 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenTrustlet(
         // Session has been established, new session object must be created
         Session *sessionObj = device->createNewSession(session->sessionId, sessionConnection);
         // If the session tci was a mapped buffer then register it
-        if (bulkBuf)
+        if(bulkBuf)
             sessionObj->addBulkBuf(bulkBuf);
 
         LOG_I(" Successfully opened session %d.", session->sessionId);
 
     } while (false);
-
-    if (mcResult != MC_DRV_OK && bulkBuf) {
-        delete bulkBuf;
-    }
 
 // TODO: enable as soon as there are more error codes
 //    if (mcResult == MC_DRV_ERR_SOCKET_WRITE || mcResult == MC_DRV_ERR_SOCKET_READ) {
@@ -702,191 +672,6 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenTrustlet(
 
     devMutex.unlock();
 
-#endif /* WIN32 */
-    return mcResult;
-}
-
-//------------------------------------------------------------------------------
-__MC_CLIENT_LIB_API mcResult_t mcOpenGPTA(
-    mcSessionHandle_t  *session,
-    const mcUuid_t     *uuid,
-    uint8_t            *tci,
-    uint32_t           len
-)
-{
-    mcResult_t mcResult = MC_DRV_OK;
-
-#ifndef WIN32
-    devMutex.lock();
-    LOG_I("===%s()===", __FUNCTION__);
-
-    BulkBufferDescriptor *bulkBuf = NULL;
-
-    do {
-        uint32_t handle = 0;
-        CHECK_NOT_NULL(session);
-        CHECK_NOT_NULL(uuid);
-
-        if (len > MC_MAX_TCI_LEN) {
-            LOG_E("TCI length is longer than %d", MC_MAX_TCI_LEN);
-            mcResult = MC_DRV_ERR_TCI_TOO_BIG;
-            break;
-        }
-
-        // Get the device associated with the given session
-        Device *device = resolveDeviceId(session->deviceId);
-        CHECK_DEVICE(device);
-
-        Connection *devCon = device->connection;
-
-        // First assume the TCI is a contiguous buffer
-        // Get the physical address of the given TCI
-        CWsm_ptr pWsm = device->findContiguousWsm(tci);
-        if (pWsm == NULL) {
-            if (tci != NULL && len != 0) {
-                // Then assume it's a normal buffer that needs to be mapped
-                mcResult = device->mapBulkBuf(tci, len, &bulkBuf);
-                if (mcResult != MC_DRV_OK) {
-                    LOG_E("Registering buffer failed. ret=%x", mcResult);
-                    mcResult = MC_DRV_ERR_WSM_NOT_FOUND;
-                    break;
-                }
-                handle = bulkBuf->handle;
-            } else if ( len != 0 ) {
-                LOG_E("mcOpenSession(): length is more than allocated TCI");
-                mcResult = MC_DRV_ERR_TCI_GREATER_THAN_WSM;
-                break;
-            }
-        } else {
-            if (pWsm->len < len) {
-                LOG_E("mcOpenSession(): length is more than allocated TCI");
-                mcResult = MC_DRV_ERR_TCI_GREATER_THAN_WSM;
-                break;
-            }
-            handle = pWsm->handle;
-        }
-
-        SEND_TO_DAEMON(devCon, MC_DRV_CMD_OPEN_TRUSTED_APP,
-                       session->deviceId,
-                       *uuid,
-                       (uint32_t)(tci) & 0xFFF,
-                       (uint32_t)handle,
-                       len);
-
-        // Read command response
-        RECV_FROM_DAEMON(devCon, &mcResult);
-
-        if (mcResult != MC_DRV_OK) {
-            // TODO-2012-09-06-haenellu: Remove this code once tests can handle it
-
-            if (MC_DRV_ERROR_MAJOR(mcResult) != MC_DRV_ERR_MCP_ERROR) {
-                LOG_E("Daemon could not open session, responseId %d.", mcResult);
-            } else {
-                uint32_t mcpResult = MC_DRV_ERROR_MCP(mcResult);
-                LOG_E("<t-base reported failing of MC_MCP_CMD_OPEN_SESSION command, mcpResult %d.", mcpResult);
-
-                // IMPROVEMENT-2012-09-03-haenellu: Remove this switch case and use MCP code in tests.
-                switch (mcpResult) {
-                case MC_MCP_RET_ERR_WRONG_PUBLIC_KEY:
-                    mcResult = MC_DRV_ERR_WRONG_PUBLIC_KEY;
-                    break;
-                case MC_MCP_RET_ERR_CONTAINER_TYPE_MISMATCH:
-                    mcResult = MC_DRV_ERR_CONTAINER_TYPE_MISMATCH;
-                    break;
-                case MC_MCP_RET_ERR_CONTAINER_LOCKED:
-                    mcResult = MC_DRV_ERR_CONTAINER_LOCKED;
-                    break;
-                case MC_MCP_RET_ERR_SP_NO_CHILD:
-                    mcResult = MC_DRV_ERR_SP_NO_CHILD;
-                    break;
-                case MC_MCP_RET_ERR_TL_NO_CHILD:
-                    mcResult = MC_DRV_ERR_TL_NO_CHILD;
-                    break;
-                case MC_MCP_RET_ERR_UNWRAP_ROOT_FAILED:
-                    mcResult = MC_DRV_ERR_UNWRAP_ROOT_FAILED;
-                    break;
-                case MC_MCP_RET_ERR_UNWRAP_SP_FAILED:
-                    mcResult = MC_DRV_ERR_UNWRAP_SP_FAILED;
-                    break;
-                case MC_MCP_RET_ERR_UNWRAP_TRUSTLET_FAILED:
-                    mcResult = MC_DRV_ERR_UNWRAP_TRUSTLET_FAILED;
-                    break;
-                default:
-                    // TODO-2012-09-06-haenellu: Remove line and adapt codes in tests.
-                    mcResult = MC_DRV_ERR_MCP_ERROR;
-                    break;
-                }
-            }
-            break; // loading of Trustlet failed, unlock mutex and return
-        }
-
-        // read payload
-        mcDrvRspOpenSessionPayload_t rspOpenSessionPayload;
-        RECV_FROM_DAEMON(devCon, &rspOpenSessionPayload);
-
-        // Register session with handle
-        session->sessionId = rspOpenSessionPayload.sessionId;
-
-        LOG_I(" Service is started. Setting up channel for notifications.");
-
-        // Set up second channel for notifications
-        Connection *sessionConnection = new Connection();
-        if (!sessionConnection->connect(SOCK_PATH)) {
-            LOG_E("Could not connect to %s", SOCK_PATH);
-            delete sessionConnection;
-            // Here we know we couldn't connect to the Daemon.
-            // Maybe we should use existing connection to close Trustlet.
-            mcResult = MC_DRV_ERR_SOCKET_CONNECT;
-            break;
-        }
-
-        do {
-            SEND_TO_DAEMON(sessionConnection, MC_DRV_CMD_NQ_CONNECT,
-                           session->deviceId,
-                           session->sessionId,
-                           rspOpenSessionPayload.deviceSessionId,
-                           rspOpenSessionPayload.sessionMagic);
-
-            RECV_FROM_DAEMON(sessionConnection, &mcResult);
-
-            if (mcResult != MC_DRV_OK) {
-                LOG_E("CMD_NQ_CONNECT failed, respId=%d", mcResult);
-                break;
-            }
-
-        } while (0);
-        if (mcResult != MC_DRV_OK) {
-            delete sessionConnection;
-            // Here we know we couldn't communicate well with the Daemon.
-            // Maybe we should use existing connection to close Trustlet.
-            break; // unlock mutex and return
-        }
-
-        // there is no payload.
-
-        // Session has been established, new session object must be created
-        Session *sessionObj = device->createNewSession(session->sessionId, sessionConnection);
-        // If the session tci was a mapped buffer then register it
-        if (bulkBuf)
-            sessionObj->addBulkBuf(bulkBuf);
-
-        LOG_I(" Successfully opened session %d.", session->sessionId);
-
-    } while (false);
-
-    if (mcResult != MC_DRV_OK && bulkBuf) {
-        delete bulkBuf;
-    }
-
-// TODO: enable as soon as there are more error codes
-//    if (mcResult == MC_DRV_ERR_SOCKET_WRITE || mcResult == MC_DRV_ERR_SOCKET_READ) {
-//        LOG_E("Connection is dead, removing device.");
-//        removeDevice(session->deviceId);
-//    }
-
-    devMutex.unlock();
-
-#endif /* WIN32 */
     return mcResult;
 }
 
@@ -894,7 +679,6 @@ __MC_CLIENT_LIB_API mcResult_t mcOpenGPTA(
 __MC_CLIENT_LIB_API mcResult_t mcCloseSession(mcSessionHandle_t *session)
 {
     mcResult_t mcResult = MC_DRV_OK;
-#ifndef WIN32
 
     LOG_I("===%s()===", __FUNCTION__);
     devMutex.lock();
@@ -923,13 +707,7 @@ __MC_CLIENT_LIB_API mcResult_t mcCloseSession(mcSessionHandle_t *session)
         }
 
         bool r = device->removeSession(session->sessionId);
-        if (!r) 
-        {
-            LOG_E("removeSession failed");
-            assert(0);
-        }
-
-
+        assert(r == true);
 
     } while (false);
 
@@ -940,7 +718,6 @@ __MC_CLIENT_LIB_API mcResult_t mcCloseSession(mcSessionHandle_t *session)
 
     devMutex.unlock();
 
-#endif /* WIN32 */
     return mcResult;
 }
 
@@ -951,9 +728,7 @@ __MC_CLIENT_LIB_API mcResult_t mcNotify(
 )
 {
     mcResult_t mcResult = MC_DRV_OK;
-#ifndef WIN32
-
-	devMutex.lock();
+    devMutex.lock();
     LOG_I("===%s()===", __FUNCTION__);
 
     do {
@@ -978,8 +753,6 @@ __MC_CLIENT_LIB_API mcResult_t mcNotify(
     }
 
     devMutex.unlock();
-
-#endif /* WIN32 */
     return mcResult;
 }
 
@@ -991,7 +764,6 @@ __MC_CLIENT_LIB_API mcResult_t mcWaitNotification(
 )
 {
     mcResult_t mcResult = MC_DRV_OK;
-#ifndef WIN32
 
     // TODO-2012-11-02-gurel: devMutex locking and unlocking had to be commented out
     // below. Otherwise, when there are multiple threads in Nwd TLC side, we endup a
@@ -1068,8 +840,6 @@ __MC_CLIENT_LIB_API mcResult_t mcWaitNotification(
     } while (false);
 
     //devMutex.unlock();
-
-#endif /* WIN32 */
     return mcResult;
 }
 
@@ -1083,7 +853,6 @@ __MC_CLIENT_LIB_API mcResult_t mcMallocWsm(
     uint32_t    wsmFlags)
 {
     mcResult_t mcResult = MC_DRV_ERR_UNKNOWN;
-#ifndef WIN32
 
     LOG_I("===%s(len=%i)===", __FUNCTION__, len);
 
@@ -1114,7 +883,6 @@ __MC_CLIENT_LIB_API mcResult_t mcMallocWsm(
 
     devMutex.unlock();
 
-#endif /* WIN32 */
     return mcResult;
 }
 
@@ -1126,8 +894,6 @@ __MC_CLIENT_LIB_API mcResult_t mcFreeWsm(
 )
 {
     mcResult_t mcResult = MC_DRV_ERR_UNKNOWN;
-#ifndef WIN32
-
     Device *device;
 
     devMutex.lock();
@@ -1165,7 +931,6 @@ __MC_CLIENT_LIB_API mcResult_t mcFreeWsm(
 
     devMutex.unlock();
 
-#endif /* WIN32 */
     return mcResult;
 }
 
@@ -1178,8 +943,6 @@ __MC_CLIENT_LIB_API mcResult_t mcMap(
 )
 {
     mcResult_t mcResult = MC_DRV_ERR_UNKNOWN;
-#ifndef WIN32
-
     static CMutex mutex;
 
     LOG_I("===%s()===", __FUNCTION__);
@@ -1259,7 +1022,6 @@ __MC_CLIENT_LIB_API mcResult_t mcMap(
 
     devMutex.unlock();
 
-#endif /* WIN32 */
     return mcResult;
 }
 
@@ -1271,8 +1033,6 @@ __MC_CLIENT_LIB_API mcResult_t mcUnmap(
 )
 {
     mcResult_t mcResult = MC_DRV_ERR_UNKNOWN;
-#ifndef WIN32
-
     static CMutex mutex;
 
     LOG_I("===%s()===", __FUNCTION__);
@@ -1282,7 +1042,6 @@ __MC_CLIENT_LIB_API mcResult_t mcUnmap(
     do {
         CHECK_NOT_NULL(sessionHandle);
         CHECK_NOT_NULL(mapInfo);
-        CHECK_NOT_NULL(mapInfo->sVirtualAddr);
         CHECK_NOT_NULL(buf);
 
         // Determine device the session belongs to
@@ -1299,7 +1058,7 @@ __MC_CLIENT_LIB_API mcResult_t mcUnmap(
         Session *session = device->resolveSessionId(sessionHandle->sessionId);
         CHECK_SESSION(session, sessionHandle->sessionId);
 
-        uint32_t handle = session->getBufHandle(mapInfo->sVirtualAddr, mapInfo->sVirtualLen);
+        uint32_t handle = session->getBufHandle(mapInfo->sVirtualAddr);
         if (handle == 0) {
             LOG_E("Unable to find internal handle for buffer %p.", mapInfo->sVirtualAddr);
             mcResult = MC_DRV_ERR_BLK_BUFF_NOT_FOUND;
@@ -1342,7 +1101,6 @@ __MC_CLIENT_LIB_API mcResult_t mcUnmap(
 
     devMutex.unlock();
 
-#endif /* WIN32 */
     return mcResult;
 }
 
@@ -1354,7 +1112,6 @@ __MC_CLIENT_LIB_API mcResult_t mcGetSessionErrorCode(
 )
 {
     mcResult_t mcResult = MC_DRV_OK;
-#ifndef WIN32
 
     devMutex.lock();
     LOG_I("===%s()===", __FUNCTION__);
@@ -1381,9 +1138,7 @@ __MC_CLIENT_LIB_API mcResult_t mcGetSessionErrorCode(
     } while (false);
 
     devMutex.unlock();
-
-#endif /* WIN32 */
-	return mcResult;
+    return mcResult;
 }
 
 //------------------------------------------------------------------------------
@@ -1393,11 +1148,7 @@ __MC_CLIENT_LIB_API mcResult_t mcDriverCtrl(
     uint32_t        len
 )
 {
-#ifndef WIN32
-
     LOG_W("mcDriverCtrl(): not implemented");
-
-#endif /* WIN32 */
     return MC_DRV_ERR_NOT_IMPLEMENTED;
 }
 
@@ -1408,7 +1159,6 @@ __MC_CLIENT_LIB_API mcResult_t mcGetMobiCoreVersion(
 )
 {
     mcResult_t mcResult = MC_DRV_OK;
-#ifndef WIN32
 
     devMutex.lock();
     LOG_I("===%s()===", __FUNCTION__);
@@ -1448,12 +1198,10 @@ __MC_CLIENT_LIB_API mcResult_t mcGetMobiCoreVersion(
     } while (0);
 
     devMutex.unlock();
-
-#endif /* WIN32 */
     return mcResult;
 }
 
-#ifndef WIN32
+
 //------------------------------------------------------------------------------
 // Only called by mcOpenDevice()
 // Must be taken with devMutex locked.
@@ -1487,6 +1235,5 @@ uint32_t getDaemonVersion(Connection *devCon, uint32_t *version)
 
     return mcResult;
 }
-#endif /* WIN32 */
 
 /** @} */
