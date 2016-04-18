@@ -12,13 +12,12 @@ COMP_PATH_MobiCoreDriverMod := $(MOBICORE_PROJECT_PATH)/include
 
 # Application wide Cflags
 GLOBAL_INCLUDES := bionic \
+	external/stlport/stlport \
 	$(COMP_PATH_MobiCore)/inc \
 	$(COMP_PATH_MobiCoreDriverMod)/Public \
-	$(COMP_PATH_MobiCore)/inc/TlCm \
-	$(COMP_PATH_MobiCore)/inc/GP \
-	$(MOBICORE_PROJECT_PATH)/common/DrSecureStorage
+	$(COMP_PATH_MobiCore)/inc/TlCm
 
-LOCAL_CXX_STL := libstlport
+GLOBAL_LIBRARIES := libstlport
 
 # Include the Daemon
 include $(MOBICORE_PROJECT_PATH)/daemon/Android.mk
@@ -26,12 +25,10 @@ include $(MOBICORE_PROJECT_PATH)/daemon/Android.mk
 MC_INCLUDE_DIR := \
     $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
     $(COMP_PATH_MobiCore)/inc \
-    $(COMP_PATH_MobiCore)/inc/GP \
     $(COMP_PATH_MobiCore)/inc/TlCm \
     $(COMP_PATH_MobiCore)/inc/TlCm/2.0 \
     $(MOBICORE_PROJECT_PATH)/daemon/ClientLib/public \
     $(MOBICORE_PROJECT_PATH)/daemon/Registry/Public
-
 MC_DEBUG := _DEBUG
 SYSTEM_LIB_DIR=/system/lib
 GDM_PROVLIB_SHARED_LIBS=libMcClient

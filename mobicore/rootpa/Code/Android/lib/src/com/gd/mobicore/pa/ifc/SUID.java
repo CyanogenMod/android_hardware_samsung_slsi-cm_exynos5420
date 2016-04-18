@@ -77,10 +77,8 @@ public class SUID implements Parcelable {
     }
 
     public void readFromParcel(Parcel in) {
-        if(in.dataAvail()>=SUID_LENGTH){
-            this.suid_ = new byte[SUID_LENGTH];
-            in.readByteArray(suid_);
-        }
+        this.suid_ = new byte[SUID_LENGTH];
+        in.readByteArray(suid_);
     }
 
     @Override
@@ -91,7 +89,8 @@ public class SUID implements Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         if(suid_!=null){
-            out.writeByteArray(suid_);
+            out.writeByteArray(suid());
         }
     }
+
 }
