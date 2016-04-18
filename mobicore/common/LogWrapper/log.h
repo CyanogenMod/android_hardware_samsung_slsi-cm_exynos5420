@@ -34,17 +34,9 @@
 #ifndef TLCWRAPPERANDROIDLOG_H_
 #define TLCWRAPPERANDROIDLOG_H_
 
-#ifndef WIN32
 #include <unistd.h>
-#define GETPID getpid
-#else
-#include <process.h>
-#define GETPID _getpid
-#endif
 #include <stdio.h>
-#ifndef WIN32
 #include <android/log.h>
-#endif
 #include <errno.h>
 #include <string.h>
 
@@ -81,6 +73,7 @@
     #define LOG_I(fmt, args...) LOG_i(fmt , ## args)
     #define LOG_W(fmt, args...) LOG_w(fmt , ## args)
 #endif
+    // LOG_E is always defined
     #define LOG_E(fmt, args...) LOG_e("ERROR - %s():\n***** " fmt, __FUNCTION__, ## args)
 
     // actually mapping to log system, adding level and tag.
@@ -97,24 +90,20 @@
     #define _LOG_x(_x_,...) \
                 do \
                 { \
-                    printf("%s/%s(%d): ",_x_,LOG_TAG,GETPID()); \
+                    printf("%s/%s(%d): ",_x_,LOG_TAG,getpid()); \
                     printf(__VA_ARGS__); \
                     printf(EOL); \
                 } while(1!=1)
 
 
 #ifdef NDEBUG // no logging in debug version
-    #define LOG_I(fmt, ...) DUMMY_FUNCTION()
-    #define LOG_W(fmt, ...) DUMMY_FUNCTION()
+    #define LOG_I(fmt, args...) DUMMY_FUNCTION()
+    #define LOG_W(fmt, args...) DUMMY_FUNCTION()
 #else
     #define LOG_I(...)  _LOG_x("I", __VA_ARGS__)
     #define LOG_W(...)  _LOG_x("W", __VA_ARGS__)
 #endif
     #define _LOG_E(...)  _LOG_x("E", __VA_ARGS__)
-
-    #define LOG_i(...) printf(__VA_ARGS__)
-	#define LOG_w(...) printf(__VA_ARGS__)
-	#define LOG_e(...) printf(__VA_ARGS__)
 
 #endif //defined(LOG_ANDROID)
 
@@ -132,7 +121,7 @@
             do \
             { \
                 _LOG_E("  *****************************"); \
-                _LOG_E("  *** ERROR: " __VA_ARGS__); \
+                _LOG_E("  *** ERROR: "__VA_ARGS__); \
                 _LOG_E("  *** Detected in %s/%u()", __FUNCTION__, __LINE__); \
                 _LOG_E("  *****************************"); \
             } while(1!=1)
@@ -143,9 +132,7 @@
 
 #define LOG_I_BUF   LOG_I_Buf
 
-#ifndef WIN32
 __attribute__ ((unused))
-#endif
 static void LOG_I_Buf(
 	const char *  szDescriptor,
 	const void *  blob,

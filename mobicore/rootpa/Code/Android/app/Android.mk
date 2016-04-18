@@ -10,10 +10,8 @@ LOCAL_STATIC_JAVA_LIBRARIES := rootpa_interface
 LOCAL_JNI_SHARED_LIBRARIES := libcommonpawrapper
 
 LOCAL_PACKAGE_NAME := RootPA
-LOCAL_MODULE_TAGS := debug eng optional
+LOCAL_MODULE_TAGS := optional
 LOCAL_CERTIFICATE := platform
-
-LOCAL_PROGUARD_FLAGS := -include $(LOCAL_PATH)/proguard-project.txt
 
 include $(BUILD_PACKAGE)
 
