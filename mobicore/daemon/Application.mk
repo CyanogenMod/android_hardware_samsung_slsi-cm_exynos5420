@@ -25,5 +25,3 @@ GLOBAL_INCLUDES := \
 APP_CFLAGS += -Wall
 
 LOG_WRAPPER := $(COMP_PATH_Logwrapper)
-
-APP_PLATFORM := android-9

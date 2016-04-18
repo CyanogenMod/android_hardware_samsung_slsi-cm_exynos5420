@@ -66,16 +66,7 @@ public class CommonPAWrapper {
     public native int getSPContainerState(int spid, int[] state);
     public native int getSPContainerStructure(int spid, int[] ints, byte[][] uuidArray, int[] trustletStates);
     public native int doProvisioning(int uid, int spid, byte[] seAddress);
-	public native int installTrustlet(int spid,
-                                      byte[] uuid,
-                                      int dataType,
-                                      byte[] tltOrKeyData,
-                                      int minTltVersion,
-                                      byte[] tltPukHash,
-                                      int memoryType,
-                                      int numberOfInstances,
-                                      int flags,
-                                      byte[] seAddress);
+	public native int installTrustlet(int spid, byte[] uuid, int dataType, byte[] tltOrKeyData, byte[] seAddress);
     public native int unregisterRootContainer(byte[] seAddress);
     public native void setEnvironmentVariable(byte[] variable, byte[] value);
 
@@ -114,10 +105,9 @@ public class CommonPAWrapper {
         Log.d(TAG,">>CommonPAWrapper.getSystemInfo");
         String[] response= new String[RESPONSE_ARRAY_SIZE];
         TelephonyManager telephonyManager = (TelephonyManager)service_.getSystemService(Context.TELEPHONY_SERVICE);
-        if(telephonyManager!=null){
-            response[IMEI_ESN_INDEX]=telephonyManager.getDeviceId();
-            response[MNO_INDEX]=telephonyManager.getSimOperatorName();
-        }
+
+        response[IMEI_ESN_INDEX]=telephonyManager.getDeviceId();
+        response[MNO_INDEX]=telephonyManager.getSimOperatorName();
         response[BRAND_INDEX]=Build.BRAND;
         response[MANUFACTURER_INDEX]=Build.MANUFACTURER;
         response[HARDWARE_INDEX]=Build.HARDWARE;

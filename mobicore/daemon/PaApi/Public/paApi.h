@@ -1,8 +1,8 @@
-/** @addtogroup MCD_MCDIMPL_DAEMON_SRV
- * @{
+/**
  * @file
+ * Proivisioning Agent API.
  *
- * MobiCore types redefinition.
+ * This header file describes the Provisioning Agent API.
  *
  * <!-- Copyright Giesecke & Devrient GmbH 2009 - 2012 -->
  *
@@ -29,12 +29,16 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @defgroup PA_API Provisioning Agent API
+ * @defgroup TLC_CONTENT_MANAGER Content Manager API
+ * @ingroup PA_API
+ *
+ * @defgroup MCD_MCDIMPL_DAEMON_REG Registry API
+ * @ingroup PA_API
  */
-#ifndef MCTYPES_H_
-#define MCTYPES_H_
 
-typedef void    *addr_t;
+#include "tlcCmApi.h"
+#include "MobiCoreRegistry.h"
 
-#endif /* MCTYPES_H_ */
 
-/** @} */
