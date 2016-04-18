@@ -1,5 +1,10 @@
 /**
- * <!-- Copyright Giesecke & Devrient GmbH 2009-2012 -->
+ * @file
+ * Proivisioning Agent API.
+ *
+ * This header file describes the Provisioning Agent API.
+ *
+ * <!-- Copyright Giesecke & Devrient GmbH 2009 - 2012 -->
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +29,16 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @defgroup PA_API Provisioning Agent API
+ * @defgroup TLC_CONTENT_MANAGER Content Manager API
+ * @ingroup PA_API
+ *
+ * @defgroup MCD_MCDIMPL_DAEMON_REG Registry API
+ * @ingroup PA_API
  */
-#ifndef MCI_VERSION_H_
-#define MCI_VERSION_H_
 
-#define MCI_VERSION_MAJOR 0
-#define MCI_VERSION_MINOR 5
+#include "tlcCmApi.h"
+#include "MobiCoreRegistry.h"
 
-#endif /** MCI_VERSION_H_ */
+
