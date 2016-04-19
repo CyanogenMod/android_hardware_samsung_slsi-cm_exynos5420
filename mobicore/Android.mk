@@ -7,10 +7,13 @@ MOBICORE_PROJECT_PATH := $(call my-dir)
 # Setup common variables
 LOG_WRAPPER := $(MOBICORE_PROJECT_PATH)/common/LogWrapper
 COMP_PATH_MobiCore := $(MOBICORE_PROJECT_PATH)/common/MobiCore
+COMP_PATH_MobiCoreDriverMod := $(MOBICORE_PROJECT_PATH)/include
+
 
 # Application wide Cflags
 GLOBAL_INCLUDES := bionic \
 	$(COMP_PATH_MobiCore)/inc \
+	$(COMP_PATH_MobiCoreDriverMod)/Public \
 	$(COMP_PATH_MobiCore)/inc/TlCm \
 	$(COMP_PATH_MobiCore)/inc/GP \
 	$(MOBICORE_PROJECT_PATH)/common/DrSecureStorage
