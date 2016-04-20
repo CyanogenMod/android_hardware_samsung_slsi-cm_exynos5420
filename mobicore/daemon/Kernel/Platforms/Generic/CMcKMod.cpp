@@ -43,7 +43,7 @@
 #include <cstring>
 
 #include "McTypes.h"
-#include "mc_linux.h"
+#include <mc_linux.h>
 #include "mcVersionHelper.h"
 
 #include "CMcKMod.h"

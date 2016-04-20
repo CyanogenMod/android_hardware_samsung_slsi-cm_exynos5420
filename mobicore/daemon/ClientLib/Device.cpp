@@ -39,7 +39,7 @@
 #include <stdint.h>
 #include <vector>
 
-#include "mc_linux.h"
+#include <mc_linux.h>
 #include "Device.h"
 
 #include "log.h"
