@@ -129,7 +129,7 @@ extern "C" void GDMCHexDump ( const unsigned char *data, int size )
     if (size>8)
       szHexLine[34] = '-';
 
-    snprintf(szHex, 8 + 1, "%08X",(unsigned int)data);
+    sprintf(szHex,"%08X",(unsigned int)data);
     memcpy(szHexLine,szHex,8);
 
     i=0;j=0;
