@@ -367,10 +367,9 @@ void* provisioningThreadFunction(void* paramsP)
     if(((provisioningparams_t*)paramsP)->tltInstallationDataP)
     {
         free((char*)((provisioningparams_t*)paramsP)->tltInstallationDataP->dataP);
-        free((char*)((provisioningparams_t*)paramsP)->tltInstallationDataP->tltPukHashP);
         free(((provisioningparams_t*)paramsP)->tltInstallationDataP);
     }
-    free(paramsP);  // Coverity complains that paramsP allocated in "provisioning" is not freed. It is done here.
+    free(paramsP);
 
     LOGD("<<provisioningThreadFunction");
     pthread_exit(NULL);
@@ -394,7 +393,6 @@ rootpaerror_t provision(mcSpid_t spid, CallbackFunctionP callbackP, SystemInfoCa
     paramsP->spid=spid;
     if(tltDataP)
     {
-        // Coverity complains that paramsP allocated here is not freed. It is done in "provisioningThreadFunction"
         paramsP->tltInstallationDataP=malloc(sizeof(trustletInstallationData_t));
         if(!paramsP->tltInstallationDataP)
         {
@@ -402,12 +400,7 @@ rootpaerror_t provision(mcSpid_t spid, CallbackFunctionP callbackP, SystemInfoCa
             return ROOTPA_ERROR_OUT_OF_MEMORY;
         }
 
-    // copy the whole struct
-
         memset(paramsP->tltInstallationDataP,0,sizeof(trustletInstallationData_t)); // initialize in order to satisfy valgrind
-        memcpy(paramsP->tltInstallationDataP, tltDataP, sizeof(trustletInstallationData_t));
-
-    // malloc and copy data from/to the pointers
 
         paramsP->tltInstallationDataP->dataP=malloc(tltDataP->dataLength);
         if(!paramsP->tltInstallationDataP->dataP)
@@ -417,18 +410,11 @@ rootpaerror_t provision(mcSpid_t spid, CallbackFunctionP callbackP, SystemInfoCa
             return ROOTPA_ERROR_OUT_OF_MEMORY;
         }
         memset((char*)paramsP->tltInstallationDataP->dataP,0,tltDataP->dataLength); // initialize in order to satisfy valgrind
-        memcpy((char*)paramsP->tltInstallationDataP->dataP, tltDataP->dataP, tltDataP->dataLength);
+        memcpy((char*)paramsP->tltInstallationDataP->dataP, tltDataP->dataP, sizeof(tltDataP->dataLength));
 
-        paramsP->tltInstallationDataP->tltPukHashP=malloc(tltDataP->tltPukHashLength);
-        if(!paramsP->tltInstallationDataP->tltPukHashP)
-        {
-            free((void*) paramsP->tltInstallationDataP->dataP);
-            free((void*) paramsP->tltInstallationDataP);
-            free(paramsP);
-            return ROOTPA_ERROR_OUT_OF_MEMORY;
-        }
-        memset((char*)paramsP->tltInstallationDataP->tltPukHashP,0,tltDataP->tltPukHashLength); // initialize in order to satisfy valgrind
-        memcpy((char*)paramsP->tltInstallationDataP->tltPukHashP, tltDataP->tltPukHashP, tltDataP->tltPukHashLength);
+        paramsP->tltInstallationDataP->dataLength = tltDataP->dataLength;
+        paramsP->tltInstallationDataP->dataType = tltDataP->dataType;
+        memcpy(&paramsP->tltInstallationDataP->uuid, &tltDataP->uuid, UUID_LENGTH);
     }
     else
     {
@@ -464,7 +450,6 @@ rootpaerror_t provision(mcSpid_t spid, CallbackFunctionP callbackP, SystemInfoCa
             if(r)
             {
                 LOGE("unable to create thread %d",r);
-                free(paramsP);
                 ret=ROOTPA_ERROR_INTERNAL;
             }
             pthread_attr_destroy(&attributes);
