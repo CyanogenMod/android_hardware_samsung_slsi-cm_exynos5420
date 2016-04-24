@@ -1,6 +1,10 @@
-/*
- * Copyright (c) 2013 TRUSTONIC LIMITED
- * All rights reserved
+/** @addtogroup FCI
+ * @{
+ * @file
+ * FastCall declarations.
+ *
+ * Holds the functions for SIQ, YIELD and FastCall for switching to the secure world.
+ * <!-- Copyright Giesecke & Devrient GmbH 2009-2012 -->
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +29,6 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *
- * @addtogroup FCI
- * @{
- * @file
- * FastCall declarations.
- *
- * Holds the functions for SIQ, YIELD and FastCall for switching to the secure world.
- *
-
  */
 #ifndef MCIFC_H_
 #define MCIFC_H_
@@ -67,9 +61,7 @@
 #define MC_FC_SW_RESET              ((uint32_t)(-26))  /**< SW Reset if DDR has leftover content */
 // --- MEM traces ---
 #define MC_FC_MEM_TRACE             ((uint32_t)(-31))  /**< Enable SWd tracing via memory */
-// --- system settings ---
-
-#define MC_FC_STAT_COUNTER          ((uint32_t)(-41))  /**< Require status counter */
+// --- write access to CP15 regs ---
 #define MC_FC_CP15_REG             ((uint32_t)(-101))  /**< general CP15/cache register update */
 // --- store value in sDDRRAM ---
 #define MC_FC_STORE_BINFO          ((uint32_t)(-201))  /**< write a 32bit value in secure DDRRAM in incremented art (max 2kB) */
@@ -77,9 +69,9 @@
 
 // Broadcom Specific Fastcalls
 #define MC_FC_BCM_VC_CORE_START    ((uint32_t)(-301)) /**<  Set the VC Core start address*/
+
 #define MC_FC_MAX_ID         ((uint32_t)(0xFFFF0000))  /**< Maximum allowed FastCall ID */
 
-#define MC_FC_SWAP_CPU              ((uint32_t)(0x84000005))  /**< Change new active Core */
 // r1 is requested status (0,1,2), on return r2 holds this status value
 
 /** @} */
