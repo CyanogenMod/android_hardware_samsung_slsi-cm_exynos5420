@@ -28,7 +28,6 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 package com.gd.mobicore.pa.ifc;
 
 import android.os.Parcel;
@@ -44,88 +43,79 @@ public class CommandResult implements Parcelable{
     */
 
     /**
-    No errors detected, successful execution
+    no errors detected, successful execution
     */
     public static final int ROOTPA_OK=0x00000000;
 
     /**
-    Client has requested unsupported CMP command or command that it can not execute via the used interface.
-    Possible steps to recover: send only supported CMP commands or update to RootPA that supports handling the particular command in the used interface.
+    client has requested unsupported command or command that it can not execute via the used interface
     */
     public static final int ROOTPA_COMMAND_NOT_SUPPORTED=0x00000001;
 
     /**
-    Either rootpa is locked by another client, or the client requests lock or unlock when it is not allowed to do that.
-    Possible steps to recover: wait until the lock is released
+    either rootpa is locked by another client, or the client requests lock or unlock when it is not allowed to do that
     */
     public static final int ROOTPA_ERROR_LOCK=0x00000002;
 
+
     /**
-    Error in one of the CMP commands, see command specific response for more details.
+    error in one of the cmp commands, see command specific response for more details
     */
     public static final int ROOTPA_ERROR_COMMAND_EXECUTION=0x00000003;
 
     /**
-    Registry returned an error when trying to write a container.  mcDaemon could be dead or something seriously wrong in the file system.
-    Possible steps to recover: rebooting the device may help
+    mobicore registry returned an error
     */
     public static final int ROOTPA_ERROR_REGISTRY=0x00000004;
 
     /**
-    Error in communicating with t-base secure side. This is returned when any of the mcDeamon API calls related to communication with secure side fails.
-    Possible steps to recover: rebooting the device may help
+     error in communicating with mobicore
     */
     public static final int ROOTPA_ERROR_MOBICORE_CONNECTION=0x00000005;
 
     /**
-    Either Nwd or Swd software is out of memory.
-    Possible steps to recover: release memory
+    either NWd or SWd software is out of memory
     */
     public static final int ROOTPA_ERROR_OUT_OF_MEMORY=0x00000006;
 
     /**
-    Rootpa internal error. This error is returned in various situations when something unexpected went wrong e.g. message from CMTL can‘t be interpreted, SE returned an error indicating invalid data, bad request or similar or base64 decoding failed
-    Possible steps to recover: rebooting or updating the device may help
+    rootpa internal error
     */
     public static final int ROOTPA_ERROR_INTERNAL=0x00000007;
 
     /**
-    Given argument is not allowed (in many cases it is NULL) or e.g. the format of xml is unsupported.
-    Possible steps to recover: give correct argument
+    given argument is not allowed (in many cases it is NULL) or e.g. the format oif xml is unsupported
     */
     public static final int ROOTPA_ERROR_ILLEGAL_ARGUMENT=0x00000008;
 
     /**
-    Error in network connection or use of networking library.
-    Possible steps to recover: create working network connection (avoid firewalls and proxies that require password)
+    error in network connection or use of networking library
     */
     public static final int ROOTPA_ERROR_NETWORK=0x00000009;
 
     /**
-    Error returned by XML library. Problems in parsing received XML command or creating new XML response.
+    error is parsing received XML command or creating new XML response
     */
     public static final int ROOTPA_ERROR_XML=0x0000000A;
 
     /**
-    Registry returned an error when trying to read a container. Most likely the container does not exist.
+    mobicore registry error, requested object does not exists (or cannot be read for some other reason)
     */
     public static final int ROOTPA_ERROR_REGISTRY_OBJECT_NOT_AVAILABLE=0x0000000B;
 
     /**
-    CMP version of the device is not supported by SE.
-    Possible steps to recover: use CMP version supported by SE (>=3.0)
+    CMP version of the device is not supported by SE
     */
     public static final int ROOTPA_ERROR_SE_CMP_VERSION=0x0000000C;
 
     /**
-    Precoditions for SP container installation are not met in SE.
-    Possible steps to recover: register used SPID to SE
+    Precoditions for SP container installation are not met in SE
     */
     public static final int ROOTPA_ERROR_SE_PRECONDITION_NOT_MET=0x0000000D;
 
     /**
-    Requested SP container does not exist. This is not always considered an error but is used as an informative return code. As this is internal return code, user of RootPA services should never see this.
-    Possible steps to recover: add SP container or request container with different SPID
+    requested container does not exist. This is not always considered an error
+    but is used as an informative return code
     */
     public static final int ROOTPA_ERROR_INTERNAL_NO_CONTAINER=0x00000030;
 

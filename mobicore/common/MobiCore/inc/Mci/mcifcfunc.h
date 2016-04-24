@@ -1,6 +1,12 @@
-/*
- * Copyright (c) 2013 TRUSTONIC LIMITED
- * All rights reserved
+/** @addtogroup FCI
+ * @{
+ * @file
+ * Declaration of FastCall helper functions.
+ *
+ * @attention Helper functions are mostly RealView (ARM CC) specific.
+ *
+ * Holds the functions for SIQ, YIELD and FastCall for switching to the secure world.
+ * <!-- Copyright Giesecke & Devrient GmbH 2009-2012 -->
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +31,6 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *
- * @addtogroup FCI
- * @{
- * @file
- * Declaration of FastCall helper functions.
- *
- * @attention Helper functions are mostly RealView (ARM CC) specific.
- *
- * Holds the functions for SIQ, YIELD and FastCall for switching to the secure world.
- * <!-- Copyright © Trustonic Limited 2013 -->
- *
  */
 
 #ifndef MCIFCFUNC_H_
